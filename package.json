@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/masato1983/gulp3-practice/issues"
   },
-  "homepage": "https://github.com/masato1983/gulp3-practice#readme"
+  "homepage": "https://github.com/masato1983/gulp3-practice#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2"
+  }
 }
