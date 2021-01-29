@@ -2,11 +2,13 @@ const { src, dest, watch, series } = require('gulp');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const browserSync = require('browser-sync');
+const cleanCss = require('gulp-clean-css');
 
 function styles() {
   return src(['./src/sass/**/*.scss', '!./src/sass/widget.scss'])
     .pipe(sourcemaps.init())
     .pipe(sass())
+    .pipe(cleanCss())
     .pipe(sourcemaps.write('.'))
     .pipe(dest('./dist/css'))
 }
