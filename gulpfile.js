@@ -1,6 +1,7 @@
 const { src, dest, watch, series } = require('gulp');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
+const browserSync = require('browser-sync');
 
 function styles() {
   return src(['./src/sass/**/*.scss', '!./src/sass/widget.scss'])
@@ -10,9 +11,13 @@ function styles() {
     .pipe(dest('./dist/css'))
 }
 
-function watchs() {
-  watch('./src/sass/**/*.scss', series(styles))
+function serve() {
+  browserSync.init({
+    server: './',
+    browser: 'google chrome'
+  })
+  watch('./src/sass/**/*.scss', series(styles)).on('change', browserSync.reload)
 }
 
 exports.styles = styles;
-exports.watchs = watchs;
+exports.serve = serve;
