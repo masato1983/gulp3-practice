@@ -4,6 +4,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const browserSync = require('browser-sync');
 const GulpCleanCss = require('gulp-clean-css');
 const GulpUglify = require('gulp-uglify');
+const rename = require('gulp-rename');
 
 function styles() {
   return src(['./src/sass/**/*.scss', '!./src/sass/widget.scss'])
@@ -11,12 +12,19 @@ function styles() {
     .pipe(sass())
     .pipe(GulpCleanCss())
     .pipe(sourcemaps.write('.'))
+    .pipe(rename(function(path) {
+      if (!path.extname.endsWith('.map')) {
+        path.basename += '.min'
+      }}))
     .pipe(dest('./dist/css'))
 }
 
 function javascript() {
   return src('./src/js/**/*.js')
     .pipe(GulpUglify())
+    .pipe(rename({
+      suffix: '.min'
+    }))
     .pipe(dest('./dist/js'))
 }
 
