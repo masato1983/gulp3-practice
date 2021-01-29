@@ -5,6 +5,7 @@ const browserSync = require('browser-sync');
 const GulpCleanCss = require('gulp-clean-css');
 const GulpUglify = require('gulp-uglify');
 const rename = require('gulp-rename');
+const GulpConcat = require('gulp-concat');
 
 function styles() {
   return src(['./src/sass/**/*.scss', '!./src/sass/widget.scss'])
@@ -20,7 +21,8 @@ function styles() {
 }
 
 function javascript() {
-  return src('./src/js/**/*.js')
+  return src(['./src/js/project.js', './src/js/alert.js'])
+    .pipe(GulpConcat('project.js'))
     .pipe(GulpUglify())
     .pipe(rename({
       suffix: '.min'
