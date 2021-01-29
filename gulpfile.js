@@ -1,4 +1,4 @@
-const { src, dest } = require('gulp');
+const { src, dest, watch, series } = require('gulp');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 
@@ -10,4 +10,9 @@ function styles() {
     .pipe(dest('./dist/css'))
 }
 
+function watchs() {
+  watch('./src/sass/**/*.scss', series(styles))
+}
+
 exports.styles = styles;
+exports.watchs = watchs;
