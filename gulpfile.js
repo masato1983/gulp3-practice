@@ -16,7 +16,7 @@ function serve() {
     server: './',
     browser: 'google chrome'
   })
-  watch('./src/sass/**/*.scss', series(styles)).on('change', browserSync.reload)
+  watch(['./src/sass/**/*.scss', '**/*.html'], series(styles)).on('change', browserSync.reload)
 }
 
 exports.styles = styles;
