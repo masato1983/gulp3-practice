@@ -7,6 +7,7 @@ const GulpUglify = require('gulp-uglify');
 const rename = require('gulp-rename');
 const GulpConcat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
+const cache = require('gulp-cache');
 
 // Sass
 
@@ -36,9 +37,10 @@ function javascript() {
 }
 
 // Image Optimization
+
 function image() {
   return src('./src/img/**/*.+(png|jpg|gif|svg)')
-    .pipe(imagemin())
+    .pipe(cache(imagemin()))
     .pipe(dest('./dist/img/'))
 }
 
@@ -52,6 +54,13 @@ function serve() {
   watch(['./src/sass/**/*.scss', '**/*.html', './src/js/**/*.js', './src/img/**/*.+(png|jpg|gif|svg)'], series(styles, javascript, image)).on('change', browserSync.reload)
 }
 
+// Clear cache
+
+function clearCache(done) {
+  return cache.clearAll(done);
+}
+
 exports.styles = styles;
 exports.serve = serve;
 exports.image = image;
+exports.clearCache = clearCache;
