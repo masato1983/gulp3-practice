@@ -1,4 +1,4 @@
-const { src, dest, watch, series } = require('gulp');
+const { src, dest, watch, series, parallel } = require('gulp');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const browserSync = require('browser-sync');
@@ -14,10 +14,17 @@ const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 
+filesPath = {
+  sass: './src/sass/**/*.scss',
+  js: './src/js/**/*.js',
+  images: './src/img/**/*.+(png|jpg|gif|svg)',
+  pug:  './src/templates/**/*.pug'
+}
+
 // pug
 
 function buildHTML() {
-  return src(['./src/templates/**/*.pug', '!./src/templates/includes/*.pug', '!./src/templates/extends/*.pug'])
+  return src([filesPath.pug, '!./src/templates/includes/*.pug', '!./src/templates/extends/*.pug'])
     .pipe(plumber())
     .pipe(pug())
     .pipe(htmlmin({
@@ -29,7 +36,7 @@ function buildHTML() {
 // Sass
 
 function styles() {
-  return src(['./src/sass/**/*.scss', '!./src/sass/widget.scss'])
+  return src([filesPath.sass, '!./src/sass/widget.scss'])
     .pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(autoprefixer())
@@ -60,7 +67,7 @@ function javascript() {
 // Image Optimization
 
 function image() {
-  return src('./src/img/**/*.+(png|jpg|gif|svg)')
+  return src(filesPath.images)
     .pipe(cache(imagemin()))
     .pipe(dest('./dist/img/'))
 }
@@ -72,7 +79,7 @@ function serve() {
     server: './dist',
     browser: 'google chrome'
   })
-  watch(['./src/templates/**/*.pug', './src/sass/**/*.scss', './src/js/**/*.js', './src/img/**/*.+(png|jpg|gif|svg)'], series(buildHTML, styles, javascript, image)).on('change', browserSync.reload)
+  watch([filesPath.pug, filesPath.sass, filesPath.js, filesPath.images], parallel(buildHTML, styles, javascript, image)).on('change', browserSync.reload)
 }
 
 // Clear cache
@@ -81,5 +88,7 @@ function clearCache(done) {
   return cache.clearAll(done);
 }
 
-exports.default = serve;
+exports.default = series(buildHTML, styles, javascript, image, serve)
+
+// exports.default = serve;
 exports.clearCache = clearCache;
