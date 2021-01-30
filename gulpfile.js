@@ -61,6 +61,6 @@ function clearCache(done) {
 }
 
 exports.styles = styles;
-exports.serve = serve;
+exports.default = serve;
 exports.image = image;
 exports.clearCache = clearCache;
