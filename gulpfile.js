@@ -2,16 +2,17 @@ const { src, dest, watch, series } = require('gulp');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const browserSync = require('browser-sync');
-const GulpCleanCss = require('gulp-clean-css');
-const GulpUglify = require('gulp-uglify');
+const cleancss = require('gulp-clean-css');
+const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
-const GulpConcat = require('gulp-concat');
+const concat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
 const cache = require('gulp-cache');
 const pug = require('gulp-pug');
 const plumber = require("gulp-plumber");
 const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('gulp-autoprefixer');
+const babel = require('gulp-babel');
 
 // pug
 
@@ -23,7 +24,6 @@ function buildHTML() {
       collapseWhitespace: true
     }))
     .pipe(dest('./dist'))
-    .pipe(browserSync.stream())
 }
 
 // Sass
@@ -33,7 +33,7 @@ function styles() {
     .pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(autoprefixer())
-    .pipe(GulpCleanCss())
+    .pipe(cleancss())
     .pipe(sourcemaps.write('.'))
     .pipe(rename(function(path) {
       if (!path.extname.endsWith('.map')) {
@@ -46,8 +46,11 @@ function styles() {
 
 function javascript() {
   return src(['./src/js/project.js', './src/js/alert.js'])
-    .pipe(GulpConcat('project.js'))
-    .pipe(GulpUglify())
+    .pipe(concat('project.js'))
+    .pipe(babel({
+      presets: ['@babel/env']
+    }))
+    .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
     }))
