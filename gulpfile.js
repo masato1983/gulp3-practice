@@ -8,6 +8,20 @@ const rename = require('gulp-rename');
 const GulpConcat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
 const cache = require('gulp-cache');
+const pug = require('gulp-pug');
+const plumber = require("gulp-plumber");
+
+// pug
+
+function buildHTML() {
+  return src(['./src/templates/**/*.pug', '!./src/templates/includes/*.pug', '!./src/templates/extends/*.pug'])
+    .pipe(plumber())
+    .pipe(pug({
+      pretty: true
+    }))
+    .pipe(dest('./dist'))
+    .pipe(browserSync.stream())
+}
 
 // Sass
 
@@ -48,10 +62,10 @@ function image() {
 
 function serve() {
   browserSync.init({
-    server: './',
+    server: './dist',
     browser: 'google chrome'
   })
-  watch(['./src/sass/**/*.scss', '**/*.html', './src/js/**/*.js', './src/img/**/*.+(png|jpg|gif|svg)'], series(styles, javascript, image)).on('change', browserSync.reload)
+  watch(['./src/templates/**/*.pug', './src/sass/**/*.scss', './src/js/**/*.js', './src/img/**/*.+(png|jpg|gif|svg)'], series(buildHTML, styles, javascript, image)).on('change', browserSync.reload)
 }
 
 // Clear cache
@@ -60,7 +74,5 @@ function clearCache(done) {
   return cache.clearAll(done);
 }
 
-exports.styles = styles;
 exports.default = serve;
-exports.image = image;
 exports.clearCache = clearCache;
