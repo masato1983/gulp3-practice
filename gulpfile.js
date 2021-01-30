@@ -13,6 +13,7 @@ const plumber = require("gulp-plumber");
 const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
+const zip = require('gulp-zip');
 
 filesPath = {
   sass: './src/sass/**/*.scss',
@@ -88,7 +89,14 @@ function clearCache(done) {
   return cache.clearAll(done);
 }
 
-exports.default = series(buildHTML, styles, javascript, image, serve)
+// zipfile
 
-// exports.default = serve;
+function zipfile() {
+  return src(['./**/*', '!./node_modules/**/*'])
+    .pipe(zip('project.zip'))
+    .pipe(dest('./'))
+}
+
+exports.default = series(buildHTML, styles, javascript, image, serve);
 exports.clearCache = clearCache;
+exports.zipfile = zipfile;
