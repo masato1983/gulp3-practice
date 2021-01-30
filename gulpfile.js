@@ -11,6 +11,7 @@ const cache = require('gulp-cache');
 const pug = require('gulp-pug');
 const plumber = require("gulp-plumber");
 const htmlmin = require('gulp-htmlmin');
+const autoprefixer = require('gulp-autoprefixer');
 
 // pug
 
@@ -31,6 +32,7 @@ function styles() {
   return src(['./src/sass/**/*.scss', '!./src/sass/widget.scss'])
     .pipe(sourcemaps.init())
     .pipe(sass())
+    .pipe(autoprefixer())
     .pipe(GulpCleanCss())
     .pipe(sourcemaps.write('.'))
     .pipe(rename(function(path) {
@@ -78,4 +80,3 @@ function clearCache(done) {
 
 exports.default = serve;
 exports.clearCache = clearCache;
-exports.buildHTML = buildHTML;
