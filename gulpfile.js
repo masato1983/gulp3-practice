@@ -10,14 +10,16 @@ const imagemin = require('gulp-imagemin');
 const cache = require('gulp-cache');
 const pug = require('gulp-pug');
 const plumber = require("gulp-plumber");
+const htmlmin = require('gulp-htmlmin');
 
 // pug
 
 function buildHTML() {
   return src(['./src/templates/**/*.pug', '!./src/templates/includes/*.pug', '!./src/templates/extends/*.pug'])
     .pipe(plumber())
-    .pipe(pug({
-      pretty: true
+    .pipe(pug())
+    .pipe(htmlmin({
+      collapseWhitespace: true
     }))
     .pipe(dest('./dist'))
     .pipe(browserSync.stream())
@@ -76,3 +78,4 @@ function clearCache(done) {
 
 exports.default = serve;
 exports.clearCache = clearCache;
+exports.buildHTML = buildHTML;
