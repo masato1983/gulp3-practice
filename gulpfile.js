@@ -6,6 +6,9 @@ const GulpCleanCss = require('gulp-clean-css');
 const GulpUglify = require('gulp-uglify');
 const rename = require('gulp-rename');
 const GulpConcat = require('gulp-concat');
+const imagemin = require('gulp-imagemin');
+
+// Sass
 
 function styles() {
   return src(['./src/sass/**/*.scss', '!./src/sass/widget.scss'])
@@ -20,6 +23,8 @@ function styles() {
     .pipe(dest('./dist/css'))
 }
 
+// Javascript
+
 function javascript() {
   return src(['./src/js/project.js', './src/js/alert.js'])
     .pipe(GulpConcat('project.js'))
@@ -29,6 +34,15 @@ function javascript() {
     }))
     .pipe(dest('./dist/js'))
 }
+
+// Image Optimization
+function image() {
+  return src('./src/img/**/*.+(png|jpg|gif|svg)')
+    .pipe(imagemin())
+    .pipe(dest('./dist/img/'))
+}
+
+// Watch task with BrowserSync
 
 function serve() {
   browserSync.init({
@@ -40,3 +54,4 @@ function serve() {
 
 exports.styles = styles;
 exports.serve = serve;
+exports.image = image;
