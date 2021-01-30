@@ -49,7 +49,7 @@ function serve() {
     server: './',
     browser: 'google chrome'
   })
-  watch(['./src/sass/**/*.scss', '**/*.html', './src/js/**/*.js'], series(styles, javascript)).on('change', browserSync.reload)
+  watch(['./src/sass/**/*.scss', '**/*.html', './src/js/**/*.js', './src/img/**/*.+(png|jpg|gif|svg)'], series(styles, javascript, image)).on('change', browserSync.reload)
 }
 
 exports.styles = styles;
