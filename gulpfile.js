@@ -26,7 +26,7 @@ filesPath = {
 
 // pug
 
-function buildHTML() {
+function pugTask() {
   return src([filesPath.pug, '!./src/templates/includes/*.pug', '!./src/templates/extends/*.pug'])
     .pipe(plumber({errorHandler: notifier.error}))
     .pipe(pug())
@@ -38,7 +38,7 @@ function buildHTML() {
 
 // Sass
 
-function styles() {
+function sassTask() {
   return src([filesPath.sass, '!./src/sass/widget.scss'])
     .pipe(plumber({errorHandler: notifier.error}))
     .pipe(sourcemaps.init())
@@ -55,7 +55,7 @@ function styles() {
 
 // Javascript
 
-function javascript() {
+function jsTask() {
   return src(['./src/js/project.js', './src/js/alert.js'])
     .pipe(plumber({errorHandler: notifier.error}))
     .pipe(concat('project.js'))
@@ -71,7 +71,7 @@ function javascript() {
 
 // Image Optimization
 
-function image() {
+function imagesTask() {
   return src(filesPath.images)
     .pipe(cache(imagemin()))
     .pipe(dest('./dist/img/'))
@@ -84,7 +84,7 @@ function serve() {
     server: './dist',
     browser: 'google chrome'
   })
-  watch([filesPath.pug, filesPath.sass, filesPath.js, filesPath.images], parallel(buildHTML, styles, javascript, image)).on('change', browserSync.reload)
+  watch([filesPath.pug, filesPath.sass, filesPath.js, filesPath.images], parallel(pugTask, sassTask, jsTask, imagesTask)).on('change', browserSync.reload)
 }
 
 // Clear cache
@@ -93,9 +93,9 @@ function clearCache(done) {
   return cache.clearAll(done);
 }
 
-// zipfile
+// Zip project
 
-function zipfile() {
+function zipTask() {
   return src(['./**/*', '!./node_modules/**/*'])
     .pipe(zip('project.zip'))
     .pipe(dest('./'))
@@ -107,8 +107,20 @@ function clean() {
   return del(['./dist/**/*'])
 }
 
-// exports
+// Gulp individual tasks
 
-exports.default = series(clean, buildHTML, styles, javascript, image, serve);
+exports.pugTask = pugTask;
+exports.sassTask = sassTask;
+exports.jsTask = jsTask;
+exports.imagesTask = imagesTask;
+exports.serve = serve;
 exports.clearCache = clearCache;
-exports.zipfile = zipfile;
+exports.zipTask = zipTask;
+exports.clean = clean;
+
+// Gulp build command
+exports.build = parallel(pugTask, sassTask, jsTask, imagesTask);
+
+// Gulp default command
+
+exports.default = series(clean, exports.build, serve);
