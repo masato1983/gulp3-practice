@@ -9,12 +9,13 @@ const concat = require('gulp-concat');
 const imagemin = require('gulp-imagemin');
 const cache = require('gulp-cache');
 const pug = require('gulp-pug');
-const plumber = require("gulp-plumber");
 const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 const zip = require('gulp-zip');
-const del = require('del')
+const del = require('del');
+const plumber = require("gulp-plumber");
+const notifier = require('gulp-notifier');
 
 filesPath = {
   sass: './src/sass/**/*.scss',
@@ -27,7 +28,7 @@ filesPath = {
 
 function buildHTML() {
   return src([filesPath.pug, '!./src/templates/includes/*.pug', '!./src/templates/extends/*.pug'])
-    .pipe(plumber())
+    .pipe(plumber({errorHandler: notifier.error}))
     .pipe(pug())
     .pipe(htmlmin({
       collapseWhitespace: true
@@ -39,9 +40,10 @@ function buildHTML() {
 
 function styles() {
   return src([filesPath.sass, '!./src/sass/widget.scss'])
+    .pipe(plumber({errorHandler: notifier.error}))
     .pipe(sourcemaps.init())
-    .pipe(sass())
     .pipe(autoprefixer())
+    .pipe(sass())
     .pipe(cleancss())
     .pipe(sourcemaps.write('.'))
     .pipe(rename(function(path) {
@@ -55,6 +57,7 @@ function styles() {
 
 function javascript() {
   return src(['./src/js/project.js', './src/js/alert.js'])
+    .pipe(plumber({errorHandler: notifier.error}))
     .pipe(concat('project.js'))
     .pipe(babel({
       presets: ['@babel/env']
