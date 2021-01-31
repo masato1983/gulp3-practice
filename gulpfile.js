@@ -14,6 +14,7 @@ const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 const zip = require('gulp-zip');
+const del = require('del')
 
 filesPath = {
   sass: './src/sass/**/*.scss',
@@ -97,6 +98,14 @@ function zipfile() {
     .pipe(dest('./'))
 }
 
-exports.default = series(buildHTML, styles, javascript, image, serve);
+// Clean "dist" folder
+
+function clean() {
+  return del(['./dist/**/*'])
+}
+
+// exports
+
+exports.default = series(clean, buildHTML, styles, javascript, image, serve);
 exports.clearCache = clearCache;
 exports.zipfile = zipfile;
